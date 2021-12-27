@@ -1,9 +1,16 @@
+import java.nio.BufferOverflowException;
 import java.util.ArrayList; // Libreria necesaria para crear ArrayList
+import java.util.InputMismatchException;
 import java.util.Scanner; // Librearia para crear objetos tipos Scanner
+
+import javax.swing.JOptionPane;
+
+import Exceptions.EdadException;
+import Exceptions.SalarioPositivoException;
 
 public class app {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws EdadException, SalarioPositivoException {
 		// TODO Auto-generated method stub
 		
 		// Se crea un objeto tipo scanner para los input
@@ -37,28 +44,107 @@ public class app {
 			System.out.print("Ingrese la cedula: ");
 			String cedula = input.nextLine();
 			
+			/*
 			// Pide la edad del empleado
 			System.out.print("Ingrese la edad: ");
 			int edad = input.nextInt();
+			*/
 			
 			// while que validad que la edad sea de 18 hasta 45
-			while(edad<18 || edad>45) {
-				// Pide la edad del empleado de nuevo
-				System.out.print("Ingrese la edad (entre 18 y 45 años): ");
-				edad = input.nextInt();
+			
+			String edad = "";
+			int edadInt = 0;
+			boolean edadIsCorrect = false;
+
+			// Ciclo que permitira volver a ingresar el salario en dado caso que salte una exception
+			while(!edadIsCorrect) {
+				
+				// Variable necesarias para validar
+				edadInt = 0;
+				edadIsCorrect = true;
+				
+				System.out.print("Ingrese la edad: ");
+				
+				//codigo donde puede salta la exception
+				
+				try {
+					
+				// Pide la edad del empleado
+				edad = input.nextLine();
+				
+				// Intruccion para verificar el formato de la edad
+				edadInt = Integer.parseInt(edad);
+				
+				// Verifica que la edad sea de 18 a 45
+				EdadException oEdadException = new EdadException(edadInt);
+				
+				} catch(EdadException err){ // Valida edad (18-45)
+					
+					//err.printStackTrace();
+					System.out.println(err.getMessage());
+					edadIsCorrect = false;
+				}
+				catch(NumberFormatException e) { // Valida que la edad sea entero
+					
+					// No use el InputMismatchException porque me ciclaba el while con el mensaje de error
+					// en su lugar use el NumberFormatException el cual hace algo similar
+					
+					System.out.println("Solo ingrese numero enteros, favor de volver a ingresar la edad");
+					edadIsCorrect = false;
+				}
+				
 			}
-			input.nextLine();
 			
 			
 			// Pide el estado civil de el empleado
 			System.out.print("Ingrese estado civil: ");
 			String estadoCivil = input.nextLine();
 			
-
+			boolean salarioIsCorrect = false;
+			double salario = 0;
 			
-			// Pide el salario del empleado
-			System.out.print("Ingrese salario: ");
-			double salario = input.nextDouble(); input.nextLine();
+			// Ciclo que permitira volver a ingresar el salario en dado caso que salte una excepcion
+			while(!salarioIsCorrect) {
+				
+				salarioIsCorrect = true;
+				
+				
+					System.out.print("Ingrese salario: ");
+					
+				try {
+					
+					// Pide el salario del empleado
+					String salario1 = input.nextLine();
+					
+					// Intruccion para verificar el formato del salario
+					salario = Double.parseDouble(salario1);
+					
+					// Verifica que el salario sea mayor a cero
+					SalarioPositivoException oSalarioException = new SalarioPositivoException(salario);
+					
+				}catch(InputMismatchException  e) { // OverflowException, evita que se ingrese una cantidad demasiado grande
+					
+					salarioIsCorrect = false;
+					System.out.println("Ingrese cantidades coherentes");
+					
+				} catch(NumberFormatException e) { //FormatException, verifica que el salario sea un numero decimal
+					
+					// No use el InputMismatchException porque me ciclaba el while con el mensaje de error
+					// en su lugar use el NumberFormatException el cual hace algo similar
+					
+					salarioIsCorrect = false;
+					System.out.println("Solo ingrese numeros decimales");
+					
+				} catch(SalarioPositivoException exS) { // Valida que el salario sea mayor a cero
+					
+					salarioIsCorrect = false;
+					System.out.println(exS.getMessage());
+					
+				}
+				
+			}
+			
+			
 			
 			System.out.print("\nEl empleado es un programador? (s/n): ");
 			String centinela = input.nextLine();
@@ -81,7 +167,7 @@ public class app {
 				//Seteamos los valores
 				p.setNombre(nombre+" "+apellidos);
 				p.setCedula(cedula);
-				p.setEdad(edad);
+				p.setEdad(edadInt);
 				p.setEstadoCivil(estadoCivil);
 				p.setSalario(salario);
 				p.setLineasDeCodigoPorHora(lineasDeCodigo);
@@ -98,7 +184,7 @@ public class app {
 				//Seteamos los valores
 				e.setNombre(nombre+" "+apellidos);
 				e.setCedula(cedula);
-				e.setEdad(edad);
+				e.setEdad(edadInt);
 				e.setEstadoCivil(estadoCivil);
 				e.setSalario(salario);
 				
